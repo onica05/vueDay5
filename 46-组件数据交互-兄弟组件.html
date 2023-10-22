@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>组件间数据交互</title>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <!-- 组件间的数据交互---
+        3.兄弟组件
+        ①单独的事件中心管理组件间的通信  事件中心管理——eventHub
+        语法结构：var eventHub = new Vue()
+        ②监听事件与销毁事件
+        第一个参数是：自定义事件名称；第二个参数是：自定义事件函数
+        eventHub.$on('add-todo', addTodo)
+        eventHub.$off('add-todo')
+        ③触发事件
+        第一个参数是：自定义事件名称；第二个参数是：自定义事件的id
+        eventHub.$emit('add-todo', id)
+     -->
+
+    <div id="app">
+        <div>父组件</div>
+        <div>
+            <button @click="handle">销毁事件</button>
+        </div>
+        <test-tom></test-tom>
+        <test-jerry></test-jerry>
+
+    </div>
+
+
+    <!-- 引入vue.js库文件 -->
+    <script type="text/javascript" src="../JS/vue.js"></script>
+    <script type="text/javascript">
+        // 提供事件中心
+        var hub = new Vue();
+        //    兄弟组件
+        Vue.component('test-tom', {
+            data: function () {
+                return {
+                    num: 0
+                }
+            },
+            template: `
+            <div>
+               <div>
+                <div>TOM: {{num}}</div>
+                </div>
+                <div>
+                <button v-on:click="handle">点击这个会改变jerry的num</button>
+                </div>
+            </div>
+            `,
+            methods: {
+                handle: function () {
+                    // 触发 监听的对方（兄弟组件）的事件
+                    // 这个 2 在实机演示过程中表示，每点击一次 都+2，也对应监听事件的val
+                    hub.$emit('jerry-event', 2)
+                }
+            },
+            mounted: function () {
+                // 这个钩子函数被触发，表示模板已就绪
+                // 监听事件
+                hub.$on('tom-event', (val) => {
+                    // 这个val是兄弟组件传递过来的
+                    this.num += val;
+                });
+            }
+        }),
+            Vue.component('test-jerry', {
+                data: function () {
+                    return {
+                        num: 0
+                    }
+                },
+                template: `
+            <div>
+               <div>
+                <div>JERRY: {{num}}</div>
+                </div>
+                <div>
+                <button v-on:click="handle">点击这个会改变tom的num</button>
+                </div>
+            </div>
+            `,
+                methods: {
+                    handle: function () {
+                        hub.$emit('tom-event', 1)
+                    }
+                },
+                mounted: function () {
+                    // 这个钩子函数被触发，表示模板已就绪
+                    // 监听事件
+                    hub.$on('jerry-event', (val) => {
+                        // 这个val是兄弟组件传递过来的
+                        this.num += val;
+                    });
+                }
+            })
+
+
+
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                pmsg: '我是父组件的内容',
+                parr: ['apple', 'orange', 'banana'],
+                fontSize: 10,
+
+            },
+            methods: {
+                handle: function (val) {
+                    //销毁事件
+                    hub.$off('tom-event')
+                    hub.$off('jerry-event')
+
+                }
+            }
+
+
+        });
+
+    </script>
+</body>
+
+</html>

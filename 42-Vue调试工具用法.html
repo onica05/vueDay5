@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue调试工具用法</title>
+    <style>
+        .root{
+            background-color: red;
+        }
+        .second{
+            background-color: yellow;
+        }
+        .third{
+            background-color: green;
+        }
+    </style>
+</head>
+
+<body>
+<!-- 主要是安装devtools，安装步骤直接看收藏，在安装完成之后，且在扩展程序内看见才算完成，
+    devtools只有在使用vue开发的项目中才会启用，一般看见都是灰色图标，
+    想看是否可以使用，登录bilibili网站就可以了
+    并且需要引入vue.js
+ -->
+
+ <!-- 测试devtools -->
+    <div id="app">
+        <div class="root">{{root}}</div>
+        <second-com></second-com>
+        <second-com></second-com>
+
+    </div>
+
+
+    <!-- 引入vue.js库文件 -->
+    <!-- vue.js没有经过压缩，适合开发测试Debug时使用，vue.min.js代码经过了压缩，适合发布上线时用，节约些资源。 -->
+    <script type="text/javascript" src="../JS/vue.js"></script>
+    <script type="text/javascript">
+        Vue.component('second-com',{
+            data:function(){
+                return {
+                    second:'二级组件'
+                }
+            },
+            template:`<div class="second">
+            <div>{{second}}</div>
+            <third-com></third-com>
+            <third-com></third-com>
+            <third-com></third-com>
+            </div>`,
+        });
+        Vue.component('third-com',{
+            data:function(){
+                return {
+                    third:'三级组件'
+                }
+            },
+            template:`<div class="third">
+                <div>{{third}}</div>
+                </div>
+            `,
+        });
+
+
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                root:'顶层组件'
+            },
+            
+
+        });
+
+    </script>
+</body>
+
+</html>

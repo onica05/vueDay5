@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课后案例-用户管理</title>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+
+        .grid {
+            width: 900px;
+            text-align: center;
+            border: 1px solid red;
+        }
+
+        .grid table {
+            border-collapse: collapse;
+            width: 100%;
+
+        }
+
+        .grid .userList {
+            background-color: peachpuff;
+        }
+
+        .grid thead {
+            background-color: pink;
+        }
+
+        .grid tr {
+            height: 40px;
+        }
+
+        .grid th,
+        td {
+            border: 1px solid palevioletred;
+        }
+
+        .inputRow {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="app">
+        <div>
+            <h1>用户管理</h1>
+        </div>
+        <!-- 用户列表 -->
+        <div class="grid">
+            <div class="userList">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>用户名</th>
+                            <th>年龄</th>
+                            <th>毕业学校</th>
+                            <th>备注</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item ,index) in userList" v-cloak>
+                            <td>{{item.userName}}</td>
+                            <td>{{item.userAge}}</td>
+                            <td>{{item.school}}</td>
+                            <td>{{item.remarks}}</td>
+                            <td>
+                                <a href="#" @click.prevent="toEdilt(userList.id)">编辑</a>
+                                <span>|</span>
+                                <a href="#" @click.prevent="deleteUser(userList.id)">删除</a>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                    <tfoot>
+                        <div class="inputRow">
+
+                        </div>
+                        <tr>
+                            <td>
+                                <input type="text" placeholder="请输入姓名" v-model="inputList.userName">
+                            </td>
+                            <td>
+                                <!-- oninput="value=value.replace(/[^\d]/g,'')" 表示限制表单只能输入数字 -->
+                                <input type="text" placeholder="请输入年龄" v-model="inputList.userAge"
+                                    oninput="value=value.replace(/[^\d]/g,'')">
+                            </td>
+                            <td>
+                                <select name="school" id="id" v-model="inputList.school">
+                                    <option value="光明高中">光明高中</option>
+                                    <option value="复兴高中">复兴高中</option>
+                                    <option value="中山中学">中山中学</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" placeholder="备注" v-model="inputList.remarks">
+                            </td>
+                            <td>
+                                <button @click="submit">保存</button>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+        </div>
+    </div>
+    <!-- 案例总结：1.下拉框：一开始始终传到不到表格里面，然后用v-model双向绑定解决，
+        其中还需要通过option里面的value值确定school的赋值 ；对应下面的inputList里面的school，来确定所选择的option;
+        2.删除用户：不仅是让userList.length-1，而是利用索引号和splice()方法；
+        3.编辑操作：始终获取不到id，一直输出undefinded，由于userList是一个数组，所以就采用index= userList.length-1的办法，来获取相应的内容
+
+        总体还是有bug:1.点击编辑，在修改内容的时候，表格上面也会同步变化；编辑完点保存的时候，并不是在原来的地方，而是看作一个新的内容去填充到表格里面。
+        2.在答案里面，多次使用Id，可是我这边使用总是undefinded
+    -->
+
+    <!-- 引入vue.js库文件 -->
+    <script type="text/javascript" src="../JS/vue.min.js"></script>
+    <script type="text/javascript">
+
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                userList: [{
+                    id: 1,
+                    userName: '小米',
+                    userAge: 19,
+                    school: '光明高中',
+                    remarks: '班长'
+                }],
+                inputList: [{
+                    id: 0,
+                    userName: '',
+                    userAge: '',
+                    school: 0,
+                    remarks: '',
+                }]
+            },
+            methods: {
+                // 添加用户
+                submit: function () {
+                    // 不能提交空表单___可以想办法解决以下
+                    // if(this.inputList === ''){
+                    //     console.log('空表单');
+                    // }
+                    // console.log(this.inputList);
+
+                    this.userList.push(this.inputList)
+                    // 注意命名，userList和inputList里面对应的属性名称要一样，不然就push不成功
+                    // console.log(this.userList);
+                    console.log(this.inputList.school);
+                    console.log(this.userList[0].school);
+
+                    // 清空input,不要直接等于空，会报错
+                    this.inputList = {
+                        id: 0,
+                        userName: '',
+                        userAge: '',
+                        school: '',
+                        remarks: '',
+                    }
+                },
+                // 删除用户
+                deleteUser: function (id) {
+                    // 删除逻辑：点击之后，让userList.id-1,这个id用index接受，因为splice(index, 删除个数)
+                    console.log('删除之前的长度' + this.userList.length);
+                    // this.userList = this.userList.length - 1;
+
+                    var index = this.userList.findIndex(function (item) {
+                        console.log(item);
+                        // 这个Id始终是undefinded
+                        console.log(id);
+                        return item.id == id
+                    });
+                    this.userList.splice(index, 1)
+                    console.log('删除之后的长度' + this.userList.length);
+
+
+                },
+                // 编辑操作
+                toEdilt: function (id) {
+                    console.log(id);
+                    // 逻辑：点击之后让输入框的内容 等于 所点击的哪一行的内容
+                    // console.log(this.userList); 这里输出就可以发现userList是一个数组，所以调用的时候要采用数组的形式才行
+                    // console.log(this.userList[0].userName); 这两个输出就是判断如何拿到索引为0 的那一行的名字
+                    // console.log(this.userList[0].id);
+
+                    // 因为index是从0开始算的，所以不能直接userList.length，会报错undefinded，减1的话就找到了
+                    var index = this.userList.length - 1;
+                    console.log('kankan' + index);
+
+                    console.log(this.userList[index]);
+                    // 这个两个输出是为了判断Index 是否定义正确
+                    console.log('-----------');
+                    console.log(this.userList[0]);
+                    // 实际操作，本质上就是一个赋值的动作
+                    this.inputList = this.userList[index]
+
+                }
+            }
+        });
+
+
+    </script>
+</body>
+
+</html>

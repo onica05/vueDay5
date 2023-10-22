@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>组件间数据交互</title>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <!-- 组件间的数据交互---
+        1.父组件向子组件传值——利用props属性
+        语法结构：Vue.component('menu-item',{
+            props:['title'], 用于接受父组件传过来的数据，是一个数组
+            template:'<div>{{title}}</div>'
+        })
+        传递方法：父组件通过属性将值传递给子组件，这两个方式可以结合使用
+        <menu-item title='来自父组件的数据'></menu-item> 静态的方式
+        <menu-item :title='title'></menu-item>   动态的方式,
+     -->
+     <!-- 属性名命名规则：
+        1.在props中使用驼峰命名（如在JS中），则在模板中用短横线的方式（如在html中）
+        2.字符串形式的模板中没有这个限制
+     -->
+    <div id="app">
+        <div>{{pmsg}}</div>
+        <menu-item title='来自父组件的数据' :content="hi" :hello-world="world"></menu-item>
+        <menu-item :title='ptitle' :content="hi" :hello-world="world"></menu-item>
+
+    </div>
+
+
+    <!-- 引入vue.js库文件 -->
+    <script type="text/javascript" src="../JS/vue.js"></script>
+    <script type="text/javascript">
+        //    父组件向子组件传值
+        Vue.component('menu-item', {
+            props: ['title', 'content','helloWorld'],
+            data: function () {
+                return {
+                    msg: '子组件本身的数据'
+                }
+            },
+            template: '<div>{{msg + "---- "+ title +"------"+ content + "----"+ helloWorld}}</div>',
+        })
+
+
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                pmsg: '我是父组件的内容',
+                ptitle:'动态绑定属性',
+                hi:'hello',
+                world:'你好世界'
+            },
+
+
+        });
+
+    </script>
+</body>
+
+</html>

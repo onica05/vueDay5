@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>组件间数据交互--props属性值类型</title>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <!-- 组件间的数据交互---
+        1.父组件向子组件传值——利用 props属性
+        语法结构：Vue.component('menu-item',{
+            props:['title'], 用于接受父组件传过来的数据，是一个数组
+            template:'<div>{{title}}</div>'
+        })
+        传递方法：父组件通过属性将值传递给子组件，这两个方式可以结合使用
+        <menu-item title='来自父组件的数据'></menu-item> 静态的方式
+        <menu-item :title='title'></menu-item>   动态的方式,
+     -->
+    <!-- 属性名命名规则：
+        1.在props中使用驼峰命名（如在JS中），则在模板中用短横线的方式（如在html中）
+        2.字符串形式的模板中没有这个限制
+     -->
+    <!-- props属性值类型：
+        1.字符串
+        2.数值,在var vm = new Vue的data中不用再次定义
+        3.布尔值
+        4.数值
+        5.对象
+     -->
+    <div id="app">
+        <div>{{pmsg}}</div>
+        <menu-item :title='pstr' :pnum='12'  :pboo='true':parray='parray' :pobj='pobj'></menu-item>
+
+    </div>
+
+
+    <!-- 引入vue.js库文件 -->
+    <script type="text/javascript" src="../JS/vue.js"></script>
+    <script type="text/javascript">
+        //    父组件向子组件传值
+        Vue.component('menu-item', {
+            props: ['title', 'pnum', 'pboo', 'parray', 'pobj'],
+
+            template: `
+            <div>
+                <div>{{title}}</div>
+                <div>{{pnum}}</div>
+                <div>{{12+pnum}}</div>
+                <div>{{pboo}}</div>
+                <div>{{parray}}</div>
+                <ul>
+                    <li :key='index' v-for='(item,index) in parray'>{{item}}</li>
+                </ul>
+                <div>{{pobj}}</div>
+                <div>
+                    <span>{{'我的姓名是' + pobj.name}}</span>
+                    <span>{{'我的年龄是' + pobj.age}}</span>
+                </div>
+            </div>
+            `,
+        })
+
+
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                pmsg: '父组件中的内容',
+                pstr: '这是个字符串案例==hello',
+                parray: ['apple', 'orange', 'banana'],
+                pobj:{
+                    name:'min',
+                    age:25
+                }
+            },
+
+
+        });
+
+    </script>
+</body>
+
+</html>

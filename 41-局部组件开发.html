@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>组件化开发---局部组件化开发</title>
+</head>
+
+<body>
+    <!-- 概述： 把不同的功能，封装到不同的组件中，然后组件可以通过组合的方式，形成一个完整意义上的应用 -->
+    <!-- 写的位置是在 var vm = new Vue这个里面,采用components属性components:{'components-a':ComponetA} 'components-a'表示组件名称,ComponetA表示组件内容-->
+
+    <!-- 用于填充数据的标签 -->
+    <div id="app">
+        <runoob></runoob>
+    </div>
+
+
+    <!-- 引入vue.js库文件 -->
+    <script type="text/javascript" src="../JS/vue.js"></script>
+    <script type="text/javascript">
+        // 局部组件注册,只能在注册他的 父组件 当中使用,不能像全局的一样 将<div>{{msg}}</div> 写在其他template里面
+        var helloWorld = {
+            data:function(){
+                return{
+                    msg:'helloWorld'
+                }
+            },
+            template:`<div>{{msg}}</div>`
+        }
+
+
+        var vm = new Vue({
+            el: '#app',
+            data: {
+
+            },
+            components: {
+                'runoob': helloWorld
+            }
+
+        });
+
+    </script>
+</body>
+
+</html>

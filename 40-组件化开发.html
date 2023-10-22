@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>组件化开发--全局组件化开发</title>
+</head>
+<body>
+    <!-- 概述： 把不同的功能，封装到不同的组件中，然后组件可以通过组合的方式，形成一个完整意义上的应用 -->
+    <!-- 全局组件注册的语法结构:
+        Vue.component(组件名称,{
+            data:组件内部需要的数据, [data的值是一个函数!!!]
+            template:组件模板内容
+        })
+     -->
+     <!-- 组件用法:直接通过组件的名称来使用,以标签的形式 -->
+     <!-- 注意事项:
+        1.data必须是一个函数!! 跟var vm = new Vue 里面的data不一样,他是个对象.
+        2.组件模板的内容必须是单个的根元素,要想放多个兄弟关系的元素,此时就需要在外面用个div包起来即可
+        3.组件模板内容可以是模板字符串--es6语法
+        4.命名方式:短横线方式:my-name(更推荐); 驼峰命名方式:myName,驼峰命名的组件,使用的时候只能在字符串模板中使用组件
+     -->
+
+    <!-- 用于填充数据的标签 -->
+    <div id="app">
+        <!-- 组件可以重用,之间的数据不会被影响!!! 是独立的 -->
+       <button-counter></button-counter>
+       <button-counter></button-counter>
+       <button-counter></button-counter>
+       <!-- 只有利用短横线命名的模板,才可以写在这里 -->
+    </div>  
+
+
+    <!-- 引入vue.js库文件 -->
+    <script type="text/javascript" src="../JS/vue.js"></script>
+    <script type="text/javascript">
+        // 利用驼峰命名 定义一个组件
+        Vue.component('helloWorld',{
+            data:function(){
+                return{
+                    msg:'hi,我是上面利用驼峰命名的组件',
+                }
+            },
+            template:'<div>{{msg}}</div>'
+        });
+
+        // 定义一个名为button-counter的新组件
+        Vue.component('button-counter',{
+            data:function(){
+                return {
+                    // 这里面放我们需要的数据
+                    count:0,
+                }
+            },
+            // template:'<button v-on:click="count++">点击了{{count}}次</button>', click="count++"这里可以直接等于具体操作,也是利用methods属性,就跟前面学的一样写法
+            // template:'<button v-on:click="handle">点击了{{count}}次</button>',
+            // 利用模板字符串的形式写template, template内部也可以写其他组件的使用标签---如:helloWorld
+            template:`
+            <div>
+                <button v-on:click="count++">点击了{{count}}次</button>
+                <button >测试123</button>
+                <helloWorld></helloWorld>
+            </div>
+            `,
+            methods:{
+                handle:function(){
+                    // 注意这里还是需要加this才可以调用到
+                    this.count+=2;
+                }
+            }
+            
+        })
+        
+        var vm = new Vue({
+            el: '#app', 
+            data: {
+              
+            },
+            
+        });
+    </script>
+</body>
+</html>
